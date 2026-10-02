@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#4b1f6f">
+  <meta name="description" content="PTPA Cafeteria Lunch POS">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+  <title>PTPA Cafeteria POS</title>
+</head>
+<body>
+  <div id="app">
+    <header class="topbar">
+      <div>
+        <div class="eyebrow">Pentecostal Temple Preparatory Academy</div>
+        <h1>PTPA Cafeteria POS</h1>
+      </div>
+      <div class="top-actions">
+        <span id="onlineStatus" class="status-pill">Offline-ready</span>
+        <button id="adminBtn" class="secondary">Admin</button>
+      </div>
+    </header>
+
+    <main>
+      <section id="posView" class="view active">
+        <div class="pos-grid">
+          <div class="card keypad-card">
+            <div class="meal-row">
+              <button class="meal-btn active" data-meal="Lunch">Lunch</button>
+              <button class="meal-btn" data-meal="Breakfast">Breakfast</button>
+            </div>
+
+            <label class="pin-label" for="pinDisplay">Enter Student Number</label>
+            <input id="pinDisplay" class="pin-display" inputmode="numeric" autocomplete="off" maxlength="12" aria-label="Student number">
+            <div id="keypad" class="keypad">
+              <button data-key="1">1</button><button data-key="2">2</button><button data-key="3">3</button>
+              <button data-key="4">4</button><button data-key="5">5</button><button data-key="6">6</button>
+              <button data-key="7">7</button><button data-key="8">8</button><button data-key="9">9</button>
+              <button data-action="clear" class="muted">Clear</button><button data-key="0">0</button><button data-action="lookup" class="accent">Enter</button>
+            </div>
+          </div>
+
+          <div class="card student-card">
+            <div id="studentState" class="student-state empty">
+              <div class="student-icon">🎓</div>
+              <h2>Ready</h2>
+              <p>Enter a student number to begin.</p>
+            </div>
+            <div id="studentResult" class="student-result hidden">
+              <div class="student-avatar" id="studentInitials">ST</div>
+              <div>
+                <div class="student-name" id="studentName">Student Name</div>
+                <div class="student-meta" id="studentMeta">Grade</div>
+                <div class="student-id" id="studentIdText">ID</div>
+              </div>
+              <button id="serveBtn" class="serve-btn">Serve Lunch</button>
+              <button id="cancelStudentBtn" class="secondary wide">Cancel</button>
+            </div>
+          </div>
+
+          <div class="card stats-card">
+            <h3>Today</h3>
+            <div class="stats">
+              <div><span id="todayBreakfast">0</span><small>Breakfast</small></div>
+              <div><span id="todayLunch">0</span><small>Lunch</small></div>
+              <div><span id="todayTotal">0</span><small>Total Meals</small></div>
+            </div>
+            <div id="lastMessage" class="message info">System ready.</div>
+          </div>
+        </div>
+      </section>
+
+      <section id="adminView" class="view">
+        <div class="admin-header">
+          <div>
+            <div class="eyebrow">Administrator</div>
+            <h2>Cafeteria Dashboard</h2>
+          </div>
+          <button id="backToPosBtn" class="secondary">Back to POS</button>
+        </div>
+
+        <div class="admin-grid">
+          <div class="card">
+            <h3>Today's Summary</h3>
+            <div class="stats">
+              <div><span id="adminBreakfast">0</span><small>Breakfast</small></div>
+              <div><span id="adminLunch">0</span><small>Lunch</small></div>
+              <div><span id="adminStudents">0</span><small>Active Students</small></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3>Roster</h3>
+            <div class="toolbar">
+              <button id="addStudentBtn" class="primary">Add Student</button>
+              <label class="file-button">Import CSV<input id="importRosterInput" type="file" accept=".csv,text/csv"></label>
+              <button id="exportRosterBtn" class="secondary">Export Roster</button>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Student #</th><th>Name</th><th>Grade</th><th>Status</th><th></th></tr></thead>
+                <tbody id="rosterTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3>Meal Records</h3>
+            <div class="toolbar">
+              <input id="reportDate" type="date">
+              <select id="reportMealFilter">
+                <option value="">All Meals</option>
+                <option>Breakfast</option>
+                <option>Lunch</option>
+              </select>
+              <button id="refreshReportBtn" class="secondary">Refresh</button>
+              <button id="exportMealsBtn" class="primary">Export CSV</button>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Date</th><th>Time</th><th>Student #</th><th>Student</th><th>Grade</th><th>Meal</th><th></th></tr></thead>
+                <tbody id="mealTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3>Backup & Settings</h3>
+            <div class="toolbar vertical">
+              <button id="backupBtn" class="primary">Download Full Backup</button>
+              <label class="file-button">Restore Backup<input id="restoreInput" type="file" accept=".json,application/json"></label>
+              <button id="changePinBtn" class="secondary">Change Admin PIN</button>
+              <button id="clearMealsBtn" class="danger">Delete ALL Meal Records</button>
+            </div>
+            <p class="hint">Default admin PIN: <strong>2468</strong>. Change it after setup.</p>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <dialog id="adminPinDialog">
+    <form method="dialog" class="dialog-card" id="adminPinForm">
+      <h3>Administrator Access</h3>
+      <p>Enter the admin PIN.</p>
+      <input id="adminPinInput" type="password" inputmode="numeric" maxlength="12" required>
+      <div class="dialog-actions">
+        <button value="cancel" class="secondary">Cancel</button>
+        <button id="adminPinSubmit" value="default" class="primary">Unlock</button>
+      </div>
+      <div id="adminPinError" class="message error hidden">Incorrect PIN.</div>
+    </form>
+  </dialog>
+
+  <dialog id="studentDialog">
+    <form method="dialog" class="dialog-card" id="studentForm">
+      <h3 id="studentDialogTitle">Add Student</h3>
+      <label>Student Number<input id="formStudentId" required maxlength="20"></label>
+      <label>First Name<input id="formFirstName" required maxlength="60"></label>
+      <label>Last Name<input id="formLastName" required maxlength="60"></label>
+      <label>Grade<input id="formGrade" placeholder="K, 1, 2..." required maxlength="12"></label>
+      <label class="checkbox"><input id="formActive" type="checkbox" checked> Active</label>
+      <input id="editingOriginalId" type="hidden">
+      <div class="dialog-actions">
+        <button value="cancel" class="secondary">Cancel</button>
+        <button id="saveStudentBtn" value="default" class="primary">Save</button>
+      </div>
+      <div id="studentFormError" class="message error hidden"></div>
+    </form>
+  </dialog>
+
+  <dialog id="changePinDialog">
+    <form method="dialog" class="dialog-card" id="changePinForm">
+      <h3>Change Admin PIN</h3>
+      <label>New PIN<input id="newAdminPin" type="password" inputmode="numeric" minlength="4" maxlength="12" required></label>
+      <label>Confirm PIN<input id="confirmAdminPin" type="password" inputmode="numeric" minlength="4" maxlength="12" required></label>
+      <div class="dialog-actions">
+        <button value="cancel" class="secondary">Cancel</button>
+        <button value="default" class="primary">Save PIN</button>
+      </div>
+      <div id="changePinError" class="message error hidden"></div>
+    </form>
+  </dialog>
+
+  <script src="app.js"></script>
+</body>
+</html>

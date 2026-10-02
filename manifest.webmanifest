@@ -1,0 +1,17 @@
+{
+  "name": "PTPA Cafeteria POS",
+  "short_name": "PTPA Lunch",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f4f3f7",
+  "theme_color": "#4b1f6f",
+  "description": "Offline-ready cafeteria meal counting system for Pentecostal Temple Preparatory Academy.",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
